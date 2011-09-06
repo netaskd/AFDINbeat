@@ -1,0 +1,11 @@
+#!/bin/sh
+dahdi_install(){
+    echo -ne "You want compile and install $dahdi?[yN]:";read usespace
+    if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+	cd $FHOME/temp && wget http://parabel.ru/d/$dahdi.tar.bz2 &&\
+	tar -xvf $dahdi.tar.bz2 && cd $dahdi &&\
+	./build.sh && ./install.sh &&\
+	yum -y install dahdi-tools
+    fi
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

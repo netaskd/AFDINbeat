@@ -1,0 +1,12 @@
+#!/bin/sh
+update_pkg(){
+    echo -en "Update pakages?[yN]:";read usespace
+    if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+	yum -y update
+	yum -y install mc openssh-clients wget git system-config-network-tui make cpp gcc automake flex kernel-devel patch
+	yum -y remove kernel-2.6.32-71.el6
+	rpm -ivh http://download.fedora.redhat.com/pub/epel/6/x86_64/epel-release-6-5.noarch.rpm
+	#yum --enablerepo=epel -y install pacemaker corosync cluster-glue
+    fi
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

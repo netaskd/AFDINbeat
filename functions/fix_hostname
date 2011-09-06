@@ -1,0 +1,11 @@
+#!/bin/sh
+fix_hostname(){
+    echo -ne "You want set hostname?[yN]:";read usespace
+    if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+        echo -n "Enter hostname whis machins:";read HOSTNAME
+                    echo -e "Fixing hostname - setting to $YEL $HOSTNAME $NORM\n"
+                    hostname $HOSTNAME
+                    sed -i "s/^HOSTNAME=.*/HOSTNAME=$HOSTNAME/" /etc/sysconfig/network
+    fi
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

@@ -1,0 +1,12 @@
+#!/bin/sh
+fix_uidgid(){
+    # Fix UID and GUID set 400
+    echo -en "Fix Asterisk GID and UID to 400 for NFS? [yN]:";read usespace
+        if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+            OLDUID=`cat /etc/passwd|grep asterisk|awk -F: '{print $3}'`
+            sed -i s/$OLDUID/400/g /etc/passwd
+            sed -i s/$OLDUID/400/g /etc/group
+            find / -user $OLDUID -print| xargs -t chown asterisk.asterisk > /dev/null 2>&1
+        fi    
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

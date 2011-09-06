@@ -1,0 +1,21 @@
+#!/bin/sh
+copy_HiPBX(){
+    echo -ne "Copy HiPBX?[yN]:";read usespace
+    if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+	cd $FHOME
+	if [ ! -d HiPBX ];then
+	    echo -n "Download from git?[yN]:";read usespace
+	    if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+		git clone https://github.com/FreePBX/HiPBX HiPBX
+	    fi
+	    echo -n "Download from assker home derictory?[yN]:";read usespace
+	    if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+		echo "ENTER ASSKER ADMIN PASSWORD:"
+		scp admin@ask:/mnt/net/assker/Software/Asterisk/HiPBX/HiPBX.tgz ./;tar xfv HiPBX.tgz
+		else echo "Sorry, can not be copied HiPBX"
+	    fi
+	fi
+    [ -d HiPBX ] && cd HiPBX && git pull
+    fi
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

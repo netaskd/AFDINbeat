@@ -1,0 +1,8 @@
+#!/bin/sh
+remove_temp(){
+    echo -en "Remove all temp files?[yN]:";read usespace
+    if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+	rm -rf $FHOME/temp/*
+    fi	
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

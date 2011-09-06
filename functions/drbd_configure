@@ -1,0 +1,5 @@
+#!/bin/sh
+drbd_configure(){
+    echo >/etc/drbd.conf
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

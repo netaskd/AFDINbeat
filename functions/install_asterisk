@@ -1,0 +1,11 @@
+#!/bin/sh
+install_asterisk(){
+    echo -en "Install Asterisk16? [yN]:";read usespace
+    if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+	rpm -Uvh http://dl.atrpms.net/el6-i386/atrpms/stable/atrpms-repo-6-4.el6.i686.rpm
+	yum --enablerepo=atrpms install -y asterisk16 asterisk-addons16
+	cat $FHOME/conf/asterisk > /etc/init.d/asterisk
+	
+    fi
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

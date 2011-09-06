@@ -1,0 +1,26 @@
+#!/bin/sh
+dahdi_systemconf(){
+    echo -ne "You want update /etc/dahdi/system.conf?[yN]:";read usespace
+	if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+	    echo "Enter DAHDI ELF2-AE interface (e.g. eth0):"
+	    read interface
+echo "# Creating dynamic SPAN rules:
+# address is {ethernet device}/{ELF2-AE mac address}
+# Set numchans == 31 to inband configure ELF2-AE/Asteroid to work in CCS mode.
+# Set numchans == 30 to inband configure ELF2-AE/Asteroid to work in CAS mode.
+# Creating dynamic SPAN on eth1 for ELF2-AE with mac 00:55:55:55:55:00
+# in CCS mode with timing priority == 1.
+dynamic=eth,$interface/00:55:55:55:55:00,31,1
+# Setting ALAW for timeslots 1-15,17-31. Timeslot 16 is used for CCS.
+alaw=1-15,17-31
+# Setting the OSLEC Echo Canceller
+echocanceller=oslec,1-15,17-31
+# Setting CCS with data channel on timeslot 16.
+bchan=1-15,17-31
+dchan=16
+# Setting correct zone info (tone info)
+loadzone=ru
+defaultzone=ru" > /etc/dahdi/system.conf
+	fi
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

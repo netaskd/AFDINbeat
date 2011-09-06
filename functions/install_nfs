@@ -1,0 +1,28 @@
+#!/bin/sh
+install_nfs(){
+    echo -en "Install and configure NFS?[yN]:";read usespace
+    if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+	yum -y install nfs-utils rpcbind
+	echo -en "This SERVER NFS?[yN]:";read usespace
+	if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+	echo "Configure server!!! (/etc/exports)"
+	    echo -en "Enter server FROM access:";read usespace
+	    if ! grep $usespace /etc/exports 2>&1 >/dev/null;then
+	    mkdir -p /etc/asterisk 
+	    echo "/etc/asterisk $usespace(rw,acl,sync,no_subtree_check,no_root_squash,fsid=0,no_wdelay,nohide)" >> /etc/exports
+	    sed -i "/22/a \-A\ INPUT\ \-s\ $usespace\/32\ \-m\ state\ \-\-state\ NEW \-j\ ACCEPT" /etc/sysconfig/iptables
+	    /etc/init.d/iptables restart
+	    chkconfig nfs on
+	    /etc/init.d/nfs restart
+	    fi
+	else    
+	echo "Configure client:"
+    	echo -en "Enter hostname or address server NFS:";read usespace
+	if ! grep $usespace /etc/fstab;then 
+	    echo "$usespace:/etc/asterisk /etc/asterisk nfs rw,rsize=1024,wsize=1024,hard,intr,lock  0 0" >> /etc/fstab
+	fi
+	fi  
+	/etc/init.d/rpcbind restart
+    fi
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

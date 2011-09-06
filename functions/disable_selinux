@@ -1,0 +1,10 @@
+#!/bin/sh
+disable_selinux(){
+    if selinuxenabled; then
+	echo -ne "SELinux is enabled. I've turned it off for you."
+	sed -i s/SELINUX=enforcing/SELINUX=disabled/ /etc/selinux/config
+	echo "You MUST now reboot. Sorry, there's no way to get around this."
+	exit;
+    fi
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

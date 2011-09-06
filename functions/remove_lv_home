@@ -1,0 +1,5 @@
+#!/bin/sh
+remove_lv_home(){
+    [ -f /dev/mapper/VolGroup-lv_home ]&& umount /home && lvremove /dev/mapper/VolGroup-lv_home -ff
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

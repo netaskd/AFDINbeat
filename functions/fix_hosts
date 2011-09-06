@@ -1,0 +1,24 @@
+#!/bin/sh
+fix_hosts(){
+    FILE=/etc/hosts
+    echo -ne "You want set network interfaces?[yN]:";read usespace
+    if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+	echo -e "$YEL You have interfaces:$NORM"
+	    IPS=$(ip -o addr | grep -v "1: lo" |grep -v secondary | grep inet\ | awk '{print $9"="$4}'| sed 's^/[0-9]*^^')
+	    echo -e "$YEL$IPS$NORM"
+    fixed(){	
+	    echo -n "Enter $wat $II address $MASH machins:";read usespace
+	    [ $usespace == eth0 ]&& IP=$(echo $IPS|grep $usespace|awk '{print $1}'|awk -F= '{print $2}')
+	    [ $usespace == eth1 ]&& IP=$(echo $IPS|grep $usespace|awk '{print $2}'|awk -F= '{print $2}')
+	    [ "$II" = "IP" ] && IP=$usespace && \
+	    echo -n "Enter hostname $MASH machins:" && read HOSTNAME
+		if ! grep $IP $FILE >/dev/null;then echo "$IP $HOSTNAME" >> $FILE;fi
+    }
+    wat=EXTERNAL; MASH=this;II='ethernet (ex. eth0)';fixed
+    wat=PRIVATE; fixed
+    wat=EXTERNAL; MASH=other;II='ip address';fixed
+    wat=PRIVATE; fixed
+    echo "Updating hosts file..."
+    fi
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

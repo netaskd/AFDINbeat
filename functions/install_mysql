@@ -1,0 +1,19 @@
+#!/bin/sh
+install_mysql(){
+	echo -en "Install mysql-server and configure for FreePBX? [yN]:";read usespace
+	if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+	    yum -y install mysql mysql-devel mysql-server 
+	    chkconfig mysqld on && /etc/init.d/mysqld start
+	    mysqladmin create asteriskcdrdb
+	    mysql asteriskcdrdb < $FHOME/SQL/cdr_mysql_table.sql
+	    mysqladmin create asterisk
+	    mysql asterisk < $FHOME/SQL/newinstall.sql
+	    echo "Copy and past to mysql-shell:"
+	    echo "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO asteriskuser@'%' IDENTIFIED BY 'amp109';"
+	    echo "GRANT ALL PRIVILEGES ON asterisk.* TO asteriskuser@'%' IDENTIFIED BY 'amp109';"
+	    mysql
+	    sed -i '/22/a \-A\ INPUT\ \-s\ aster1\ \-m\ state\ \-\-state\ NEW\ \-m\ tcp\ \-p\ tcp\ \-\-dport\ 3306\ \-j\ ACCEPT' /etc/sysconfig/iptables &&\
+	    /etc/init.d/iptables restart
+	fi
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

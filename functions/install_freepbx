@@ -1,0 +1,59 @@
+#!/bin/sh
+install_freepbx(){
+    echo -en "Install and configure FreePBX? [yN]:";read usespace
+    if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+	# Download freepbx
+	cd $FHOME/temp && 
+	[ ! -f freepbx-$freepbx.tar.gz ]&& wget http://mirror.freepbx.org/freepbx-$freepbx.tar.gz
+	tar zxvf freepbx-$freepbx.tar.gz ##&& patch -tp0 < $FHOME/patch/pervonah.patch
+	#sed -i "3 a date_default_timezone_set\(\"$timezone\"\)\;" $(find ./|grep php|grep -v \/php)
+	sed -i "70 a date_default_timezone_set\(\"$timezone\"\)\;" /usr/src/new/temp/freepbx-$freepbx/amp_conf/htdocs/admin/libraries/utility.functions.php
+	sed -i "297 a date_default_timezone_set\(\"$timezone\"\)\;" /usr/src/new/temp/freepbx-$freepbx/amp_conf/htdocs/admin/libraries/utility.functions.php
+	cd freepbx* && cp -r ./SQL $FHOME/ &&\
+	sed -i "s/AMPMGRUSER/admin/" $FHOME/temp/freepbx-$freepbx/amp_conf/astetc/manager.conf
+	sed -i "s/AMPMGRPASS/amp111/" $FHOME/temp/freepbx-$freepbx/amp_conf/astetc/manager.conf
+	echo "Verifing packages..."
+	# Install require packages
+	yum -y install libxml2 libxml2-devel libtiff libtiff-devel lame httpd \
+	php php-mysql php-pear php-mysql php-gd openssl openssl-devel kernel-devel perl perl-CPAN bison \
+	ncurses-devel audiofile-devel curl sox php-pear-DB php-posix
+	# Open 80 port
+	sed -i '/22/a \-A\ INPUT\ \-m\ state\ \-\-state\ NEW\ \-m\ tcp\ \-p\ tcp\ \-\-dport\ 80\ \-j\ ACCEPT' /etc/sysconfig/iptables &&\
+	# Open access from aster
+	sed -i '/23/a \-A\ INPUT\ \-s\ aster1\ \-m\ state\ \-\-state\ NEW\ \-j\ ACCEPT' /etc/sysconfig/iptables
+	/etc/init.d/iptables restart
+	# Fix config	
+	[ ! -f manager_custom.conf ] && touch $ASTCONF/manager_additional.conf $ASTCONF/manager_custom.conf
+	# Start asterisk
+	./start_asterisk start
+	# Install freepbx
+	FBCOREETC=/var/www/html/admin/modules/core/etc
+	./install_amp --install-fop false
+	cat $FHOME/conf/extensions_custom.conf >$ASTCONF/extensions_custom.conf
+	sed -i s/^hostname.*.$/hostname=$usespace/ $ASTCONF/cdr_mysql.conf
+	sed -i s/\;dbhost.*.$/dbhost=$usespace/ $ASTCONF/res_mysql.conf
+	sed -i s/\;dbname.*.$/dbname=asterisk/ $ASTCONF/res_mysql.conf
+	sed -i s/\;dbuser.*.$/dbuser=asteriskuser/ $ASTCONF/res_mysql.conf
+	sed -i s/\;dbpass.*.$/dbpass=amp109/ $ASTCONF/res_mysql.conf
+	sed -i s/\;dbport/dbport/ $ASTCONF/res_mysql.conf
+	sed -i s/\;dbsock/dbsock/ $ASTCONF/res_mysql.conf
+	sed -i s/\;dbport/dbport/ $ASTCONF/res_mysql.conf
+	# Fix permitions and ServerName for Centos 6.0 apache
+	sed -i '242,243s/apache/asterisk/i;338s/none/All/i' /etc/httpd/conf/httpd.conf &&\
+	sed -i 's/#ServerName.*$/ServerName *:80/' /etc/httpd/conf/httpd.conf &&\
+	chown -R asterisk:asterisk /var/www/html && chkconfig httpd on && /etc/init.d/httpd restart
+	# Fix configs
+	cat $FHOME/conf/chan_dahdi.conf > $ASTCONF/chan_dahdi.conf
+	cat $FHOME/conf/chan_dahdi_groups.conf > $ASTCONF/chan_dahdi_groups.conf
+	# Create include files
+	touch $ASTCONF/chan_dahdi_general_custom.conf $ASTCONF/chan_dahdi_channels_custom.conf $ASTCONF/chan_dahdi_additional.conf $ASTCONF/chan_dahdi_general.conf
+	# Create symlink from core freepbx to asterisk config dir
+	ln -sf $FBCOREETC/extensions.conf $ASTCONF/extensions.conf
+	ln -sf $FBCOREETC/features.conf $ASTCONF/features.conf
+	ln -sf $FBCOREETC/iax.conf $ASTCONF/iax.conf
+	ln -sf $FBCOREETC/logger.conf $ASTCONF/logger.conf
+	ln -sf $FBCOREETC/sip.conf $ASTCONF/sip.conf
+	ln -sf $FBCOREETC/sip_notify.conf $ASTCONF/sip_notify.conf
+    fi
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

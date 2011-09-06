@@ -1,0 +1,26 @@
+#!/bin/bash
+#set -x
+# damit das Script LSB-konform ist
+. /etc/ha.d/pidfile.cfg
+KOMMANDO="$(echo "${@}" | awk '{print $NF}')"
+case ${KOMMANDO} in
+        start)
+                pid_beginn
+              cat $(find /sys/ -type f | fgrep 'address' | fgrep "${1}") > ${PIDDATEI}
+              ifdown ${1}
+              ifconfig ${1} hw ether ${2}
+              ifup ${1}
+                ;;
+        status)
+                pid_status
+                ;;
+        stop)
+                if [ -e "${PIDDATEI}" ] ; then
+                        ifdown ${1}
+                        ifconfig ${1} hw ether $(cat ${PIDDATEI})
+                        ifup ${1}
+                fi
+                pid_ende
+                ;;
+esac
+exit 0

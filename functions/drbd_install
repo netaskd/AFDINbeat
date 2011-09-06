@@ -1,0 +1,12 @@
+#!/bin/sh
+drbd_install(){
+    echo -en "Compile and install drbd-$drbdver?[yN]:";read usespace
+    if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+	cd $FHOME/temp ;wget http://oss.linbit.com/drbd/8.4/drbd-$drbdver.tar.gz && tar xvf drbd-$drbdver.tar.gz &&\
+	cd drbd-$drbdver && \
+	./configure --prefix=/usr --localstatedir=/var --sysconfdir=/etc --with-km && make && make install && modprobe drbd &&\
+	 echo -ne $GRE; lsmod|grep drbd; echo -ne $NORM \
+	 && rm -rf ../drbd-$drbdver*
+    fi
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

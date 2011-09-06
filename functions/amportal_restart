@@ -1,0 +1,7 @@
+#!/bin/sh
+amportal_restart(){
+    echo -ne "Restart service amportal (only asterisk server)?[yN]:"; read usespace
+        if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+	amportal restart
+	fi
+}	

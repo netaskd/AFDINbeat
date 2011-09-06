@@ -1,0 +1,14 @@
+#!/bin/sh
+configure_network(){
+    echo -ne "Configure network?[yN]:";read usespace
+    if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+	system-config-network-tui
+	sed -i 's/ONBOOT=no/ONBOOT=yes/' /etc/sysconfig/network-scripts/ifcfg-eth*
+        sed -i 's/BOOTPROTO=dhcp/BOOTPROTO=no/' /etc/sysconfig/network-scripts/ifcfg-eth*
+        sed -i 's/\/dev\/mapper\/VolGroup-lv_home/\#\/dev\/mapper\/VolGroup-lv_home/' /etc/fstab
+        echo -e "Enter default gateway to /etc/sysconfig/network:"
+        read usespace
+        echo 'GATEWAY=$usespace' >> /etc/sysconfig/network && /etc/init.d/network restart
+    fi
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

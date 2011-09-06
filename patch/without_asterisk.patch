@@ -1,0 +1,61 @@
+diff -ru /usr/src/1/freepbx-2.9.0/install_amp /usr/src/freepbx-2.9.0/install_amp
+--- /usr/src/1/freepbx-2.9.0/install_amp	2011-09-01 18:57:36.592308353 +0400
++++ /usr/src/freepbx-2.9.0/install_amp	2011-09-01 18:40:32.446347270 +0400
+@@ -695,8 +695,8 @@
+ outn("Checking if Asterisk is running..");
+ exec("pidof asterisk", $pid_val, $ret);
+ if ($ret) {
+-	out("FAILED");
+-	fatal($argv[0]."\n\tAsterisk must be running. If this is a first time install, you should start\n\tAsterisk by typing './start_asterisk start'\n\tFor upgrading, you should run 'amportal start'");
++//	out("FAILED");
++//	fatal($argv[0]."\n\tAsterisk must be running. If this is a first time install, you should start\n\tAsterisk by typing './start_asterisk start'\n\tFor upgrading, you should run 'amportal start'");
+ }
+ out("running with PID: ".$pid_val[0]."..OK");
+ 
+@@ -840,7 +840,7 @@
+ $tmpoutput = '';
+ $tmpout = exec("asterisk -V", $tmpoutput, $exitcode);
+ if ($exitcode != 0) {
+-	fatal("Error executing asterisk: be sure Asterisk is installed and in the path");
++//	fatal("Error executing asterisk: be sure Asterisk is installed and in the path");
+ }
+ if (!$fd = fopen($amp_conf['ASTETCDIR'].'/version','w')) {
+ 	fatal('Cannot open '.$amp_conf['ASTETCDIR'].'/version for writing');
+@@ -891,7 +891,7 @@
+ 		out("--my-svn-is-correct specified, continuing");
+ 	}
+ } else {
+-	fatal("Could not determine asterisk version (got: \"".$verinfo."\" please report this)");
++//	fatal("Could not determine asterisk version (got: \"".$verinfo."\" please report this)");
+ }
+ 
+ // **** Make sure selinux isn't enabled
+--- /usr/src/freepbx-2.9.0/install_amp.o	2011-09-01 20:48:17.489921049 +0400
++++ /usr/src/freepbx-2.9.0/install_amp	2011-09-01 20:49:23.320705062 +0400
+@@ -696,7 +696,7 @@
+ exec("pidof asterisk", $pid_val, $ret);
+ if ($ret) {
+ 	out("FAILED");
+-	fatal($argv[0]."\n\tAsterisk must be running. If this is a first time install, you should start\n\tAsterisk by typing './start_asterisk start'\n\tFor upgrading, you should run 'amportal start'");
++//	fatal($argv[0]."\n\tAsterisk must be running. If this is a first time install, you should start\n\tAsterisk by typing './start_asterisk start'\n\tFor upgrading, you should run 'amportal start'");
+ }
+ out("running with PID: ".$pid_val[0]."..OK");
+ 
+@@ -840,7 +840,7 @@
+ $tmpoutput = '';
+ $tmpout = exec("asterisk -V", $tmpoutput, $exitcode);
+ if ($exitcode != 0) {
+-	fatal("Error executing asterisk: be sure Asterisk is installed and in the path");
++//	fatal("Error executing asterisk: be sure Asterisk is installed and in the path");
+ }
+ if (!$fd = fopen($amp_conf['ASTETCDIR'].'/version','w')) {
+ 	fatal('Cannot open '.$amp_conf['ASTETCDIR'].'/version for writing');
+@@ -891,7 +891,7 @@
+ 		out("--my-svn-is-correct specified, continuing");
+ 	}
+ } else {
+-	fatal("Could not determine asterisk version (got: \"".$verinfo."\" please report this)");
++//	fatal("Could not determine asterisk version (got: \"".$verinfo."\" please report this)");
+ }
+ 
+ // **** Make sure selinux isn't enabled

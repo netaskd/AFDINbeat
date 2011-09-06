@@ -1,0 +1,12 @@
+#!/bin/sh
+move_astconf(){
+    echo -en "You want move asterisk configs from /etc/astersik for mount nfs volume to? [yN]:";read usespace
+        if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+            mkdir -p /tmp/$ASTCONF &&\
+            [ $ASTCONF != "" ] && mv $ASTCONF/* /tmp/$ASTCONF &&\
+            mount -a &&\
+            mv /tmp/$ASTCONF/* /$ASTCONF
+        fi
+        
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`

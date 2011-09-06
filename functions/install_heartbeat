@@ -1,0 +1,40 @@
+#!/bin/sh
+heartbeat(){
+    echo -ne "You want install heartbeat and configure it?[yN]:"; read usespace
+        if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+    	    # Install heartbeat
+	    yum -y install heartbeat
+	    # Create ha.cf
+	echo -ne "Enter name THIS server (uname -n): "; read usespace1
+	echo -ne "Enter name OTHER server: "; read usespace2
+	    echo -ne "## /etc/ha.d/ha.cf on node1 \n
+	    ## This configuration is to be the same on both machines \n
+	    ## This example is made for version 2, comment out crm if using version 1 \n
+	    debug 4 \n
+	    debugfile /var/log/ha-debug \n
+	    logfile	/var/log/ha-log \n
+	    bcast	eth0 \n
+	    keepalive 1 \n
+	    deadtime 5 \n
+	    warntime 3 \n
+	    initdead 20 \n
+	    auto_failback yes \n
+	    node $usespace1 \n
+	    node $usespace2" > /etc/ha.d/ha.cf
+	# Generation authkey for ha
+	(echo -ne "auth 1\n1 md5 " >/etc/ha.d/authkeys;dd if=/dev/urandom bs=512 count=1|openssl md5|awk '{print $2}') > /etc/ha.d/authkeys
+	chmod 600 /etc/ha.d/authkeys
+	# Configure haresources
+	cat $FHOME/conf/MAC > /etc/ha.d/resource.d/MAC; chmod +x /etc/ha.d/resource.d/MAC
+	cat $FHOME/conf/pidfile.cfg > /etc/ha.d/pidfile.cfg
+	echo "$(ifconfig -a|grep 'HWaddr'|awk '{print $1, $5}')"
+	cat /dev/.udev/db/net*|grep -E 'ID_MODEL_FROM_DATABASE|ASSIGNED_INTERFACE_NAME'|awk -F= '{print $2}'
+	echo -ne "Enter IP address HA claster service (192.168.20.95): "; read usespace
+	echo -ne "Enter address device HA claster service(ex. eth1): "; read eth
+	echo -ne "Enter address device for ELF2-AE (ex. eth0): "; read elf
+	echo -ne "Enter MAC address for ELF2-AE device: "; read mac
+	#mac=$(cat $(find /sys/ -type f | grep 'address'|grep eth0))
+	echo "$usespace1 IPaddr::$usespace/24/$eth MAC::$elf::$mac" > /etc/ha.d/haresources
+	
+	fi    
+}

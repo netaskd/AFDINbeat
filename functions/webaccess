@@ -1,0 +1,21 @@
+#!/bin/sh
+webaccess(){
+    echo -ne "Open web access from MACaddress?[yN]:"; read usespace
+    if [ "$usespace" = "Y" -o "$usespace" = "y" ]; then
+    mac(){
+	echo "Enter MAC to gate for open web access:"
+        echo "$(ifconfig -a|grep 'HWaddr'|awk '{print $1, $5}')"
+        echo -ne "Test?[Yn]:"
+                read usespace
+                if [ "$usespace" = "" -o "$usespace" = "Y" -o "$usespace" = "y" ]; then
+    		echo -en "Testing...";
+    		    if curl --connect-timeout 3 -s http://ya.ru >/dev/null;then 
+    			echo -ne "[$GRE OK $NORM]\n"
+    		    else 
+		        echo -ne "[$RED Failed $NORM]\n";mac
+		    fi
+		fi
+	};mac	
+    fi
+}
+`[ "$1" == "-d" ] && echo $0|sed "s/\.\///"  #debug script`
