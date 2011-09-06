@@ -5,9 +5,7 @@ configure_network(){
 	system-config-network-tui
 	sed -i 's/ONBOOT=no/ONBOOT=yes/' /etc/sysconfig/network-scripts/ifcfg-eth*
         sed -i 's/BOOTPROTO=dhcp/BOOTPROTO=no/' /etc/sysconfig/network-scripts/ifcfg-eth*
-        sed -i 's/\/dev\/mapper\/VolGroup-lv_home/\#\/dev\/mapper\/VolGroup-lv_home/' /etc/fstab
-        echo -e "Enter default gateway to /etc/sysconfig/network:"
-        read usespace
+        echo -en "Enter IP default gateway to /etc/sysconfig/network: "; read usespace
         echo 'GATEWAY=$usespace' >> /etc/sysconfig/network && /etc/init.d/network restart
     fi
 }

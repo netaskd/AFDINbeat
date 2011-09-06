@@ -29,12 +29,11 @@ heartbeat(){
 	cat $FHOME/conf/pidfile.cfg > /etc/ha.d/pidfile.cfg
 	echo "$(ifconfig -a|grep 'HWaddr'|awk '{print $1, $5}')"
 	cat /dev/.udev/db/net*|grep -E 'ID_MODEL_FROM_DATABASE|ASSIGNED_INTERFACE_NAME'|awk -F= '{print $2}'
-	echo -ne "Enter IP address HA claster service (192.168.20.95): "; read usespace
+	echo -ne "Enter IP address HA claster service (ex. 192.168.20.95): "; read usespace
 	echo -ne "Enter address device HA claster service(ex. eth1): "; read eth
 	echo -ne "Enter address device for ELF2-AE (ex. eth0): "; read elf
 	echo -ne "Enter MAC address for ELF2-AE device: "; read mac
 	#mac=$(cat $(find /sys/ -type f | grep 'address'|grep eth0))
 	echo "$usespace1 IPaddr::$usespace/24/$eth MAC::$elf::$mac" > /etc/ha.d/haresources
-	
 	fi    
 }
